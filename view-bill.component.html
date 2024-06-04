@@ -1,0 +1,12 @@
+<div>
+    <h1>View Bill</h1>
+    <ul>
+      <li *ngFor="let order of orders">
+        <p>Menu Item ID: {{ order.menu_id }}</p>
+        <p>Price: {{ order.price | currency }}</p>
+        <p>Quantity: {{ order.quantity }}</p>
+        <p>Total: {{ order.price * order.quantity | currency }}</p>
+      </li>
+    </ul>
+    <h2>Total: {{ total | currency }}</h2>
+</div>
