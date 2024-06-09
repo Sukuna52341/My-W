@@ -1,12 +1,15 @@
 package com.example.Pentlux_Restaurant_System.serviceImpl;
 
 import com.example.Pentlux_Restaurant_System.JWT.CustomerUsersDetailService;
+import com.example.Pentlux_Restaurant_System.JWT.JwtFilter;
 import com.example.Pentlux_Restaurant_System.JWT.JwtUtils;
 import com.example.Pentlux_Restaurant_System.POJO.User;
 import com.example.Pentlux_Restaurant_System.constents.RestaurantConstants;
 import com.example.Pentlux_Restaurant_System.dao.UserDao;
 import com.example.Pentlux_Restaurant_System.service.UserService;
+import com.example.Pentlux_Restaurant_System.utils.EmailUtils;
 import com.example.Pentlux_Restaurant_System.utils.RestaurantUtils;
+import com.example.Pentlux_Restaurant_System.wrapper.UserWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,8 +20,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -35,6 +37,12 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     JwtUtils jwtUtils;
+
+    @Autowired
+    JwtFilter jwtFilter;
+
+    @Autowired
+    EmailUtils emailUtils;
 
     @Override
     public ResponseEntity<String> signUp(Map<String, String> requestMap) {
@@ -97,5 +105,49 @@ public class UserServiceImpl implements UserService {
         }
         return new ResponseEntity<String>("{\"message\":\""+"Bad credentials"+"\"}",
                 HttpStatus.BAD_REQUEST);
+    }
+
+    @Override
+    public ResponseEntity<List<UserWrapper>> getAllUser() {
+        try {
+            if (jwtFilter.isAdmin()){
+                return new ResponseEntity<>(userDao.getAllUser(), HttpStatus.OK);
+            }else {
+                return new ResponseEntity<>(new ArrayList<>(), HttpStatus.UNAUTHORIZED);
+            }
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @Override
+    public ResponseEntity<String> update(Map<String, String> requestMap) {
+        try {
+            if (jwtFilter.isUser()){
+                Optional<User> optional = userDao.findById(Integer.parseInt(requestMap.get("id")));
+                if (!optional.isEmpty()){
+                    userDao.updateStatus(requestMap.get("status"), Integer.parseInt(requestMap.get("id")));
+                    sendMailToAllAdmin(requestMap.get("status"), optional.get().getName(), userDao.getAllAdmin());
+                    return RestaurantUtils.getResponseEntity("User Status Updated Successfully", HttpStatus.OK);
+                }else {
+                    return RestaurantUtils.getResponseEntity("User id does not exist", HttpStatus.OK);
+                }
+            }else {
+                return RestaurantUtils.getResponseEntity(RestaurantConstants.UNAUTHORISED_ACCESS, HttpStatus.UNAUTHORIZED);
+            }
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+        return RestaurantUtils.getResponseEntity(RestaurantConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    private void sendMailToAllAdmin(String status, String user, List<String> allAdmin) {
+        allAdmin.remove(jwtFilter.getCurrentUsername());
+        if (status != null && status.equalsIgnoreCase("true")) {
+            emailUtils.sendSimpleMessage(jwtFilter.getCurrentUsername(), "Account Approved", "USER:- " + user + " \n is approved by \nADMIN:-" + jwtFilter.getCurrentUsername(), allAdmin);
+        }else{
+            emailUtils.sendSimpleMessage(jwtFilter.getCurrentUsername(), "Account Disabled", "USER:- " + user + " \n is disabled by \nADMIN:-" + jwtFilter.getCurrentUsername(), allAdmin);
+        }
     }
 }
