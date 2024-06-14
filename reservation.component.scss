@@ -1,0 +1,43 @@
+.reservation-form {
+  margin: 20px;
+}
+
+.reservation-form div {
+  margin-bottom: 10px;
+}
+
+.reservation-form label {
+  display: block;
+  font-weight: bold;
+}
+
+.reservation-form input,
+.reservation-form textarea,
+.reservation-form button {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.success-message {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
+  border-radius: 4px;
+  color: #155724;
+  text-align: center;
+}
+
+.reservations-list {
+  margin: 20px;
+}
+
+.reservations-list ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.reservations-list li {
+  margin-bottom: 5px;
+}

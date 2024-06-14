@@ -1,0 +1,46 @@
+<div class="reservation-form">
+  <h2>Table Reservation</h2>
+  <form (ngSubmit)="onSubmit()">
+    <div>
+      <label for="name">Name:</label>
+      <input type="text" id="name" [(ngModel)]="name" name="name" required />
+    </div>
+    <div>
+      <label for="email">Email:</label>
+      <input type="email" id="email" [(ngModel)]="email" name="email" required />
+    </div>
+    <div>
+      <label for="phone">Phone:</label>
+      <input type="tel" id="phone" [(ngModel)]="phone" name="phone" required />
+    </div>
+    <div>
+      <label for="numberOfGuests">Number of Guests:</label>
+      <input type="number" id="numberOfGuests" [(ngModel)]="numberOfGuests" name="numberOfGuests" required min="1" />
+    </div>
+    <div>
+      <label for="date">Date:</label>
+      <input type="date" id="date" [(ngModel)]="date" name="date" required />
+    </div>
+    <div>
+      <label for="time">Time:</label>
+      <input type="time" id="time" [(ngModel)]="time" name="time" required />
+    </div>
+    <div>
+      <label for="specialRequests">Special Requests:</label>
+      <textarea id="specialRequests" [(ngModel)]="specialRequests" name="specialRequests"></textarea>
+    </div>
+    <button type="submit">Submit Reservation</button>
+  </form>
+  <div *ngIf="successMessage" class="success-message">
+    {{ successMessage }}
+  </div>
+</div>
+
+<div class="reservations-list">
+  <h2>Current Reservations</h2>
+  <ul>
+    <li *ngFor="let reservation of reservations">
+      {{ reservation.name }} - {{ reservation.date }} at {{ reservation.time }} ({{ reservation.numberOfGuests }} guests)
+    </li>
+  </ul>
+</div>
