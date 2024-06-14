@@ -1,0 +1,11 @@
+<div class="bill-container">
+  <h2>Bill Summary</h2>
+  <ul>
+    <li *ngFor="let order of orders">
+      Menu ID: {{ order.menu_id }} - Quantity: {{ order.quantity }} - Price: {{ order.price | currency }}
+    </li>
+  </ul>
+  <p>Total: {{ totalAmount | currency }}</p>
+  <button (click)="printBill()">Print Bill</button>
+  <button (click)="goBack()">Back to Orders</button>
+</div>

@@ -1,0 +1,12 @@
+<div>
+  <h1>Menu</h1>
+  <ul class="menu-list">
+    <li *ngFor="let item of menu" class="menu-item">
+      <img [src]="'assets/images/' + item.image" alt="{{ item.name }}">
+      <h2>{{ item.name }}</h2>
+      <p>{{ item.description }}</p>
+      <p>Price: {{ item.price | currency: 'XAF' }}</p>
+      <button (click)="orderItem(item.id)">Order</button>
+    </li>
+  </ul>
+</div>
