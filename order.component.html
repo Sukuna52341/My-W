@@ -1,0 +1,44 @@
+<!-- order.component.html -->
+<div class="order-form">
+  <h2>Place Order</h2>
+  <form (ngSubmit)="onSubmit()">
+    <div>
+      <label for="orderType">Order Type:</label>
+      <select id="orderType" [(ngModel)]="orderType" name="orderType" required>
+        <option value="" disabled>Select Order Type</option>
+        <option value="online">Online</option>
+        <option value="onsite">Onsite</option>
+      </select>
+    </div>
+    <div *ngIf="orderType === 'online'">
+      <label for="location">Location:</label>
+      <input type="text" id="location" [(ngModel)]="location" name="location" required />
+    </div>
+    <div *ngIf="orderType === 'onsite'">
+      <label for="tableNumber">Table Number:</label>
+      <input type="number" id="tableNumber" [(ngModel)]="tableNumber" name="tableNumber" required />
+    </div>
+    <div>
+      <label for="menuId">Menu ID:</label>
+      <input type="number" id="menuId" [(ngModel)]="menuId" name="menuId" required />
+    </div>
+    <div>
+      <label for="quantity">Quantity:</label>
+      <input type="number" id="quantity" [(ngModel)]="quantity" name="quantity" required min="1" />
+    </div>
+    <button type="submit">Place Order</button>
+  </form>
+  <div *ngIf="successMessage" class="success-message">
+    {{ successMessage }}
+  </div>
+  <button class="view-bill-button" (click)="viewBill()">View Bill</button> <!-- Added View Bill button -->
+</div>
+
+<div class="orders-list">
+  <h2>Current Orders</h2>
+  <ul>
+    <li *ngFor="let order of orders">
+      {{ order.menu_id }} - {{ order.quantity }} x ({{ order.orderType }})
+    </li>
+  </ul>
+</div>
